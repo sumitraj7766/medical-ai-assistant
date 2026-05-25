@@ -1,7 +1,8 @@
-import Groq from "groq-sdk";
+import OpenAI from "openai";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
+const client = new OpenAI({
+  apiKey: process.env.OPENROUTER_API_KEY,
+  baseURL: "https://openrouter.ai/api/v1",
 });
 
 export async function POST(req: Request) {
@@ -10,27 +11,34 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const completion = await groq.chat.completions.create({
+    const completion = await client.chat.completions.create({
+
+      model: "meta-llama/llama-3.3-70b-instruct",
+
       messages: [
+
         {
           role: "system",
           content: `
 You are a medical AI assistant.
 
-Only answer healthcare questions.
+Only answer healthcare-related questions.
 
-If unrelated question asked,
-say:
+If user asks unrelated questions, reply:
 "I only provide medical assistance."
+
+Never provide final diagnosis.
+Always recommend consulting a doctor for serious symptoms.
           `,
         },
+
         {
           role: "user",
           content: body.message,
         },
+
       ],
 
-      model: "llama-3.3-70b-versatile",
     });
 
     return Response.json({
@@ -47,4 +55,5 @@ say:
     });
 
   }
+
 }
