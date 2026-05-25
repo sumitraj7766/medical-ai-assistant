@@ -45,18 +45,38 @@ function ChatMessage({ role, text, timestamp }: ChatMessageProps) {
           <div className="prose prose-invert max-w-none">
             <ReactMarkdown
               components={{
-                p: ({ node, ...props }) => <p className="mb-2 last:mb-0" {...props} />,
-                code: ({ node, inline, ...props }) => (
-                  inline ? (
-                    <code className="bg-slate-900/50 px-2 py-1 rounded text-xs font-mono" {...props} />
-                  ) : (
-                    <code className="block bg-slate-900/70 p-3 rounded-lg overflow-x-auto text-xs font-mono mb-2" {...props} />
-                  )
-                ),
-                a: ({ node, ...props }) => (
-                  <a className="text-cyan-300 hover:text-cyan-200 underline" {...props} />
-                ),
-              }}
+              
+  p: ({ node, ...props }) => (
+    <p className="mb-2 last:mb-0" {...props} />
+  ),
+
+  code: ({ node, className, children, ...props }) => {
+    const isInline = !className;
+
+    return isInline ? (
+      <code
+        className="bg-slate-900/50 px-2 py-1 rounded text-xs font-mono"
+        {...props}
+      >
+        {children}
+      </code>
+    ) : (
+      <code
+        className="block bg-slate-900/70 p-3 rounded-lg overflow-x-auto text-xs font-mono mb-2"
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  },
+
+  a: ({ node, ...props }) => (
+    <a
+      className="text-cyan-300 hover:text-cyan-200 underline"
+      {...props}
+    />
+  ),
+}}
             >
               {text}
             </ReactMarkdown>
